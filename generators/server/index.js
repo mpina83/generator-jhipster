@@ -125,6 +125,7 @@ module.exports = class extends BaseBlueprintGenerator {
                 this.NPM_VERSION = constants.NPM_VERSION;
 
                 this.JIB_VERSION = constants.JIB_VERSION;
+                this.JACOCO_VERSION = constants.JACOCO_VERSION;
 
                 this.KAFKA_VERSION = constants.KAFKA_VERSION;
 
@@ -191,6 +192,7 @@ module.exports = class extends BaseBlueprintGenerator {
                     this.devDatabaseType = configuration.get('devDatabaseType');
                     this.prodDatabaseType = configuration.get('prodDatabaseType');
                 }
+                this.skipFakeData = configuration.get('skipFakeData') || this.configOptions.skipFakeData;
 
                 this.buildTool = configuration.get('buildTool');
                 this.jhipsterVersion = packagejs.version;

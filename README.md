@@ -17,15 +17,12 @@ Support this project by becoming a sponsor! [Become a sponsor](https://opencolle
 **Gold sponsors**
 
 [![Okta][okta-image]][okta-url]
-[Okta][okta-url]
 
 [![Octo Consulting Group][octoconsulting-image]][octoconsulting-url]
-[Octo Consulting Group][octoconsulting-url]
 
 **Silver sponsors**
 
 [![BizEquity][bizequity-image]][bizequity-url]
-[BizEquity][bizequity-url]
 
 **Bronze sponsors**
 
@@ -44,6 +41,8 @@ Support this project by becoming a sponsor! [Become a sponsor](https://opencolle
 [![UX Planet][uxplanet-image]][uxplanet-url]
 
 [![Top Web Design Agencies][top-web-design-agencies-image]][top-web-design-agencies-url]
+
+[![The Pirate Bay][the-pirate-bay-image]][the-pirate-bay-url]
 
 **Thank you to all our backers!**
 
@@ -120,7 +119,7 @@ Additional builds at [hipster-labs/jhipster-daily-builds](https://github.com/hip
 [octoconsulting-url]: http://www.octoconsulting.com/
 [bizequity-image]: https://www.jhipster.tech/images/open-collective/bizequity.png
 [bizequity-url]: https://www.bizequity.com/
-[forsyslab-image]: https://www.jhipster.tech/images/open-collective/forsyslab.jpg
+[forsyslab-image]: https://www.jhipster.tech/images/open-collective/forsyslab.png
 [forsyslab-url]: https://forsyslab.com/
 [cubaplatform-image]: https://www.jhipster.tech/images/open-collective/cubaplatform.png
 [cubaplatform-url]: https://www.cuba-platform.com/
@@ -136,6 +135,8 @@ Additional builds at [hipster-labs/jhipster-daily-builds](https://github.com/hip
 [uxplanet-url]: https://uxplanet.org/
 [top-web-design-agencies-image]: https://www.jhipster.tech/images/open-collective/top-web-design-agencies.png
 [top-web-design-agencies-url]: https://opencollective.com/top-web-design-agencies
+[the-pirate-bay-image]: https://www.jhipster.tech/images/open-collective/the-pirate-bay.png
+[the-pirate-bay-url]: https://piratebay.ink/
 [issue-template]: https://github.com/jhipster/generator-jhipster/issues/new?template=BUG_REPORT.md
 [feature-template]: https://github.com/jhipster/generator-jhipster/issues/new?template=FEATURE_REQUEST.md
 [npmcharts-image]: https://img.shields.io/npm/dm/generator-jhipster.svg?label=Downloads&style=flat

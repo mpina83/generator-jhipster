@@ -126,7 +126,7 @@ module.exports = class extends BaseDockerGenerator {
                         const databaseYaml = jsyaml.load(this.fs.read(`${path}/src/main/docker/${database}.yml`));
                         const databaseServiceName = `${lowercaseBaseName}-${database}`;
                         let databaseYamlConfig = databaseYaml.services[databaseServiceName];
-                        delete databaseYamlConfig.ports;
+                        if (database !== 'mariadb') delete databaseYamlConfig.ports;
 
                         if (database === 'cassandra') {
                             // node config
@@ -189,6 +189,15 @@ module.exports = class extends BaseDockerGenerator {
                         const memcachedConfig = memcachedYaml.services[`${lowercaseBaseName}-memcached`];
                         delete memcachedConfig.ports;
                         parentConfiguration[`${lowercaseBaseName}-memcached`] = memcachedConfig;
+                    }
+
+                    // Add Redis support
+                    if (cacheProvider === 'redis') {
+                        this.useRedis = true;
+                        const redisYaml = jsyaml.load(this.fs.read(`${path}/src/main/docker/redis.yml`));
+                        const redisConfig = redisYaml.services[`${lowercaseBaseName}-redis`];
+                        delete redisConfig.ports;
+                        parentConfiguration[`${lowercaseBaseName}-redis`] = redisConfig;
                     }
                     // Expose authenticationType
                     this.authenticationType = appConfig.authenticationType;

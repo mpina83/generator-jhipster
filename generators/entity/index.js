@@ -106,6 +106,13 @@ class EntityGenerator extends BaseBlueprintGenerator {
             defaults: false
         });
 
+        // This adds support for a `--skip-db-changelog` flag
+        this.option('skip-db-changelog', {
+            desc: 'Skip the generation of database changelog (liquibase for sql databases)',
+            type: Boolean,
+            defaults: false
+        });
+
         // This adds support for a `--db` flag
         this.option('db', {
             desc: 'Provide DB option for the application when using skip-server flag',
@@ -155,6 +162,7 @@ class EntityGenerator extends BaseBlueprintGenerator {
                 context.databaseType = configuration.get('databaseType') || this.getDBTypeFromDBValue(this.options.db);
                 context.prodDatabaseType = configuration.get('prodDatabaseType') || this.options.db;
                 context.devDatabaseType = configuration.get('devDatabaseType') || this.options.db;
+                context.skipFakeData = configuration.get('skipFakeData');
                 context.searchEngine = configuration.get('searchEngine');
                 context.messageBroker = configuration.get('messageBroker') === 'no' ? false : configuration.get('messageBroker');
                 context.enableTranslation = configuration.get('enableTranslation');
@@ -192,6 +200,7 @@ class EntityGenerator extends BaseBlueprintGenerator {
                 context.skipClient =
                     context.applicationType === 'microservice' || this.options['skip-client'] || configuration.get('skipClient');
                 context.skipServer = this.options['skip-server'] || configuration.get('skipServer');
+                context.skipDbChangelog = this.options['skip-db-changelog'] || configuration.get('skipDbChangelog');
 
                 context.angularAppName = this.getAngularAppName(context.baseName);
                 context.angularXAppName = this.getAngularXAppName(context.baseName);
@@ -354,6 +363,7 @@ class EntityGenerator extends BaseBlueprintGenerator {
             askForService: prompts.askForService,
             askForDTO: prompts.askForDTO,
             askForFiltering: prompts.askForFiltering,
+            askForReadOnly: prompts.askForReadOnly,
             askForPagination: prompts.askForPagination
         };
     }
@@ -1011,6 +1021,9 @@ class EntityGenerator extends BaseBlueprintGenerator {
                             relationship.otherEntityModuleName = `${context.angularXAppName +
                                 relationship.otherEntityNameCapitalized}Module`;
                             relationship.otherEntityFileName = _.kebabCase(relationship.otherEntityAngularName);
+                            if (relationship.otherEntityFolderName === undefined) {
+                                relationship.otherEntityFolderName = _.kebabCase(relationship.otherEntityAngularName);
+                            }
                             if (
                                 context.skipUiGrouping ||
                                 otherEntityData === undefined ||
@@ -1023,22 +1036,22 @@ class EntityGenerator extends BaseBlueprintGenerator {
                             }
                             if (otherEntityData !== undefined && otherEntityData.clientRootFolder) {
                                 if (context.clientRootFolder === otherEntityData.clientRootFolder) {
-                                    relationship.otherEntityModulePath = relationship.otherEntityFileName;
+                                    relationship.otherEntityModulePath = relationship.otherEntityFolderName;
                                 } else {
                                     relationship.otherEntityModulePath = `${
                                         context.entityParentPathAddition ? `${context.entityParentPathAddition}/` : ''
-                                    }${otherEntityData.clientRootFolder}/${relationship.otherEntityFileName}`;
+                                    }${otherEntityData.clientRootFolder}/${relationship.otherEntityFolderName}`;
                                 }
                                 relationship.otherEntityModelName = `${otherEntityData.clientRootFolder}/${
                                     relationship.otherEntityFileName
                                 }`;
-                                relationship.otherEntityPath = `${otherEntityData.clientRootFolder}/${relationship.otherEntityFileName}`;
+                                relationship.otherEntityPath = `${otherEntityData.clientRootFolder}/${relationship.otherEntityFolderName}`;
                             } else {
                                 relationship.otherEntityModulePath = `${
                                     context.entityParentPathAddition ? `${context.entityParentPathAddition}/` : ''
-                                }${relationship.otherEntityFileName}`;
+                                }${relationship.otherEntityFolderName}`;
                                 relationship.otherEntityModelName = relationship.otherEntityFileName;
-                                relationship.otherEntityPath = relationship.otherEntityFileName;
+                                relationship.otherEntityPath = relationship.otherEntityFolderName;
                             }
                         } else {
                             relationship.otherEntityModuleName = `${context.angularXAppName}SharedModule`;

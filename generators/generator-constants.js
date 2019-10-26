@@ -23,10 +23,12 @@ const JAVA_VERSION = '1.8'; // Java version is forced to be 1.8. We keep the var
 // Version of Node, Yarn, NPM
 const NODE_VERSION = '10.16.3';
 const YARN_VERSION = '1.19.0';
-const NPM_VERSION = '6.11.3';
+const NPM_VERSION = '6.12.0';
 
 // Libraries version
-const JIB_VERSION = '1.6.1';
+const JIB_VERSION = '1.7.0';
+
+const JACOCO_VERSION = '0.8.5';
 
 const KAFKA_VERSION = '5.3.1';
 
@@ -37,7 +39,7 @@ const DOCKER_MYSQL = 'mysql:8.0.17';
 const DOCKER_MARIADB = 'mariadb:10.4.8';
 const DOCKER_POSTGRESQL = 'postgres:11.5';
 const DOCKER_MONGODB = 'mongo:4.0.12';
-const DOCKER_COUCHBASE = 'couchbase:6.0.0';
+const DOCKER_COUCHBASE = 'couchbase:6.0.3';
 const DOCKER_CASSANDRA = 'cassandra:3.11.4';
 const DOCKER_MSSQL = 'microsoft/mssql-server-linux:latest';
 const DOCKER_HAZELCAST_MANAGEMENT_CENTER = 'hazelcast/management-center:3.12.5';
@@ -57,9 +59,9 @@ const DOCKER_JHIPSTER_ZIPKIN = 'jhipster/jhipster-zipkin:v4.1.0';
 const DOCKER_TRAEFIK = 'traefik:1.7.18';
 const DOCKER_CONSUL = 'consul:1.6.1';
 const DOCKER_CONSUL_CONFIG_LOADER = 'jhipster/consul-config-loader:v0.3.0';
-const DOCKER_PROMETHEUS = 'prom/prometheus:v2.12.0';
+const DOCKER_PROMETHEUS = 'prom/prometheus:v2.13.1';
 const DOCKER_PROMETHEUS_ALERTMANAGER = 'prom/alertmanager:v0.19.0';
-const DOCKER_GRAFANA = 'grafana/grafana:6.4.1';
+const DOCKER_GRAFANA = 'grafana/grafana:6.4.3';
 const DOCKER_JENKINS = 'jenkins:latest';
 const DOCKER_SWAGGER_EDITOR = 'swaggerapi/swagger-editor:latest';
 const DOCKER_COMPOSE_FORMAT_VERSION = '2';
@@ -133,7 +135,7 @@ const LANGUAGES = [
         momentLocaleId: 'hy-am'
     },
     {
-        name: 'Belorussian',
+        name: 'Belarusian',
         dispName: 'Беларускі',
         value: 'by',
         momentLocaleId: 'be-by'
@@ -306,6 +308,7 @@ const constants = {
 
     // Libraries
     JIB_VERSION,
+    JACOCO_VERSION,
 
     DOCKER_JENKINS,
     DOCKER_SWAGGER_EDITOR,
