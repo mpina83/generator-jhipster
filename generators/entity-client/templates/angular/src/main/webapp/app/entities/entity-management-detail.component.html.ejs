@@ -20,6 +20,7 @@
     <div class="col-8">
         <div *ngIf="<%= entityInstance %>">
             <h2><span jhiTranslate="<%= i18nKeyPrefix %>.detail.title"><%= entityClassHumanized %></span> {{<%= entityInstance %>.id}}</h2>
+            <h2>Angular Material version <h2>
             <hr>
             <<%= jhiPrefixDashed %>-alert-error></<%= jhiPrefixDashed %>-alert-error>
             <dl class="row-md jh-entity-details">
