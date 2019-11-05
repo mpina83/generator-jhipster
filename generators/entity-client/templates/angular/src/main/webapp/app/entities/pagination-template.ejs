@@ -149,3 +149,6 @@
         this.loadAll();
     }
     <%_ } _%>
+    protected onError(errorMessage: string) {
+        this.jhiAlertService.error(errorMessage, null, null);
+    }
