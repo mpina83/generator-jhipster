@@ -16,7 +16,7 @@
  See the License for the specific language governing permissions and
  limitations under the License.
 -%>
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit, ViewChild } from '@angular/core';
 import { <%_ if (pagination !== 'no') { _%>HttpHeaders, <% } %>HttpResponse } from '@angular/common/http';
 <%_ if (pagination === 'pagination' || pagination === 'pager') { _%>
 import { ActivatedRoute, Router } from '@angular/router';
@@ -31,12 +31,26 @@ import { I<%= entityAngularName %> } from 'app/shared/model/<%= entityModelFileN
 import { ITEMS_PER_PAGE } from 'app/shared/constants/pagination.constants';
 <%_ } _%>
 import { <%= entityAngularName %>Service } from './<%= entityFileName %>.service';
+import { MatSort } from '@angular/material/sort';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import { MatTableDataSource } from '@angular/material/table';
 
 @Component({
     selector: '<%= jhiPrefixDashed %>-<%= entityFileName %>',
     templateUrl: './<%= entityFileName %>.component.html'
 })
-export class <%= entityAngularName %>Component implements OnInit, OnDestroy {
+export class <%= entityAngularName %>Component implements OnInit, OnDestroy, AfterViewInit {
+/** Mat Table **/
+    displayedColumns: string[] = [];
+    dataSource: MatTableDataSource<I<%= entityAngularName %>>;
+    pageEvent: PageEvent;
+
+    pageIndex: number;
+    pageSize: number;
+    length: number;
+
+    @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
+    @ViewChild(MatSort, {static: false}) sortMat: MatSort;
     <%_ if (pagination === 'pagination' || pagination === 'pager') { _%>
 <%- include('pagination-template', {toArrayString: toArrayString}); -%>
     <%_ } else if (pagination === 'infinite-scroll') { _%>
@@ -46,13 +60,64 @@ export class <%= entityAngularName %>Component implements OnInit, OnDestroy {
     <%_ } _%>
 
     ngOnInit() {
-        this.loadAll();
         this.registerChangeIn<%= entityClassPlural %>();
+    }
+
+    // can only init mat-paginator on AfterViewInit to bind correctly
+    ngAfterViewInit(): void {
+    this.loadAll();
     }
 
     ngOnDestroy() {
         this.eventManager.destroy(this.eventSubscriber);
     }
+
+    // DataTable Filter
+    applyFilter(filterValue: string) {
+        this.dataSource.filter = filterValue.trim().toLowerCase();
+
+        if (this.dataSource.paginator) {
+            // force paginator to update info
+            setTimeout(() => {
+                this.paginator.pageIndex = this.page - 1;
+                this.paginator.length = this.totalItems
+            })
+        }
+    }
+    // angular mat aync call
+    public getServerData(event?: PageEvent) {
+        this.page = event.pageIndex + 1;
+        this.previousPage = event.previousPageIndex;
+        this.loadPage(event.pageIndex);
+        return event;
+    }
+
+    /** Angular Mat specific methods BEGIN **/
+    protected paginateEmailTemplatesMat(data:  I<%= entityAngularName %>[], headers: HttpHeaders) {
+        // Collect columns to display
+        this.buildDisplayedColumns(data);
+
+        // Assign the data to the data source for the table to render
+        this.dataSource = new MatTableDataSource(data);
+        // Init Table
+        this.dataSource.paginator = this.paginator;
+        this.dataSource.sort = this.sortMat;
+
+        // force paginator to update info
+        setTimeout(() => {
+            this.paginator.pageIndex = this.page - 1;
+            this.paginator.length = this.totalItems
+        })
+    }
+
+    protected buildDisplayedColumns(data:  I<%= entityAngularName %>[]) {
+    if (data && data.length > 0) {
+        this.displayedColumns = Object.keys(data[0]);
+        this.displayedColumns.push('options');
+        }
+    }
+
+    /** Angular Mat specific methods  END **/
 
     trackId(index: number, item: I<%= entityAngularName %>) {
         return item.id;
