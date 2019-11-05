@@ -40,17 +40,7 @@ import { MatTableDataSource } from '@angular/material/table';
     templateUrl: './<%= entityFileName %>.component.html'
 })
 export class <%= entityAngularName %>Component implements OnInit, OnDestroy, AfterViewInit {
-/** Mat Table **/
-    displayedColumns: string[] = [];
-    dataSource: MatTableDataSource<I<%= entityAngularName %>>;
-    pageEvent: PageEvent;
 
-    pageIndex: number;
-    pageSize: number;
-    length: number;
-
-    @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
-    @ViewChild(MatSort, {static: false}) sortMat: MatSort;
     <%_ if (pagination === 'pagination' || pagination === 'pager') { _%>
 <%- include('pagination-template', {toArrayString: toArrayString}); -%>
     <%_ } else if (pagination === 'infinite-scroll') { _%>
@@ -93,7 +83,7 @@ export class <%= entityAngularName %>Component implements OnInit, OnDestroy, Aft
     }
 
     /** Angular Mat specific methods BEGIN **/
-    protected paginateEmailTemplatesMat(data:  I<%= entityAngularName %>[], headers: HttpHeaders) {
+    protected paginate<%= entityClassPlural %>Mat(data:  I<%= entityAngularName %>[], headers: HttpHeaders) {
         // Collect columns to display
         this.buildDisplayedColumns(data);
 

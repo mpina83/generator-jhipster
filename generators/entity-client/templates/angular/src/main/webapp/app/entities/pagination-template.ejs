@@ -32,6 +32,19 @@
     predicate: any;
     previousPage: any;
     reverse: any;
+
+    /** Mat Table **/
+    displayedColumns: string[] = [];
+    dataSource: MatTableDataSource<I<%= entityAngularName %>>;
+    pageEvent: PageEvent;
+
+    pageIndex: number;
+    pageSize: number;
+    length: number;
+
+    @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
+    @ViewChild(MatSort, {static: false}) sortMat: MatSort;
+
     <%_ } _%>
 
     constructor(
@@ -76,7 +89,13 @@
             page: this.page - 1,
             size: this.itemsPerPage,
             sort: this.sort()}<%_ } _%>).subscribe(
-                (res: HttpResponse<I<%= entityAngularName %>[]>) => this.paginate<%= entityClassPlural %>(res.body, res.headers)
+                (res: HttpResponse<I<%= entityAngularName %>[]>) =>{
+                    this.paginate<%= entityClassPlural %>(res.body, res.headers);
+
+                    // Angular Mat Table
+                    this.paginate<%= entityClassPlural %>Mat(res.body, res.headers);
+                },
+                (res: HttpErrorResponse) => this.onError(res.message)
         );
     }
     <%_ if (databaseType !== 'cassandra') { _%>
