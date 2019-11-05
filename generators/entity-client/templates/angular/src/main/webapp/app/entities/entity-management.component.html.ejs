@@ -52,14 +52,14 @@
             </div>
             <div class="h2 mt-16" jhiTranslate="<%= i18nKeyPrefix %>.home.title"><%= entityClassPluralHumanized %></div>
         </div>
-        <% _ if (!readOnly) { _%>
+        <%_ if (!readOnly) { _%>
             <a mat-raised-button class="reference-button mt-16 mt-sm-0" [routerLink]="['/<%= entityUrl %>/new']">
                 <mat-icon class="mr-8">add_circle_outline</mat-icon>
                 <span jhiTranslate="<%= i18nKeyPrefix %>.home.createLabel">
              Create a new <%= entityClassHumanized %>
             </span>
             </a>
-        <% _ } _%>
+        <%_ } _%>
     </div>
     <!-- / HEADER -->
 
@@ -98,7 +98,7 @@
                                    [routerLink]="['/<%= entityUrl %>', row.id, 'view' ]">
                                     View
                                 </a>
-                                <% _ if (!readOnly) { _%>
+                                <%_ if (!readOnly) { _%>
                                 <a mat-raised-button color="accent"
                                    [routerLink]="['/<%= entityUrl %>', row.id, 'edit']">
                                     Edit
@@ -110,7 +110,7 @@
                                    queryParamsHandling="merge">
                                     Delete
                                 </a>
-                                <% _ } _%>
+                                <%_ } _%>
                             </ng-container>
                             <ng-template #standard_column> {{row[cols]}}</ng-template>
                         </td>
