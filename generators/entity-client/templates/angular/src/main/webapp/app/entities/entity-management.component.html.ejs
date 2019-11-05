@@ -16,186 +16,122 @@
  See the License for the specific language governing permissions and
  limitations under the License.
 -%>
-<div>
-    <h2>Angular Material version <h2>
-    <h2 id="page-heading">
-        <span jhiTranslate="<%= i18nKeyPrefix %>.home.title"><%= entityClassPluralHumanized %></span>
-        <%_ if (!readOnly) { _%>
-        <button id="jh-create-entity" class="btn btn-primary float-right jh-create-entity create-<%= entityUrl %>" [routerLink]="['/<%= entityUrl %>/new']">
-            <fa-icon [icon]="'plus'"></fa-icon>
-            <span <% if (searchEngine === 'elasticsearch') { %>class="hidden-sm-down" <% } %> jhiTranslate="<%= i18nKeyPrefix %>.home.createLabel">
-            Create a new <%= entityClassHumanized %>
+<style>
+    table {
+        width: 100%;
+    }
+
+    mat-form-field {
+        font-size: 14px;
+        width: 100%;
+    }
+
+    mat-cell,
+    .mat-cell,
+    mat-footer-cell,
+    .mat-footer-cell,
+    mat-header-cell, .mat-header-cell {
+        padding: 0.75rem !important;
+    }
+
+</style>
+<div class="page-layout simple fullwidth inner-sidebar">
+
+    <!-- HEADER -->
+    <div class="header accent p-24 h-160" fxLayout="row" fxLayoutAlign="center center" fxLayout.gt-xs="row"
+         fxLayoutAlign.gt-xs="space-between center">
+
+        <div fxLayout="column" fxLayoutAlign="center center">
+            <div fxLayout="row" fxLayoutAlign="start center">
+                <a routerLink="/">
+                    <mat-icon class="secondary-text s-18">home</mat-icon>
+                </a>
+                <mat-icon class="secondary-text s-16">chevron_right</mat-icon>
+                <span class="secondary-text"
+                      jhiTranslate="<%= i18nKeyPrefix %>.home.title"><%= entityClassPluralHumanized %></span>
+            </div>
+            <div class="h2 mt-16" jhiTranslate="<%= i18nKeyPrefix %>.home.title"><%= entityClassPluralHumanized %></div>
+        </div>
+        <% _ if (!readOnly) { _%>
+            <a mat-raised-button class="reference-button mt-16 mt-sm-0" [routerLink]="['/<%= entityUrl %>/new']">
+                <mat-icon class="mr-8">add_circle_outline</mat-icon>
+                <span jhiTranslate="<%= i18nKeyPrefix %>.home.createLabel">
+             Create a new <%= entityClassHumanized %>
             </span>
-        </button>
-        <%_ } _%>
-    </h2>
-    <<%= jhiPrefixDashed %>-alert-error></<%= jhiPrefixDashed %>-alert-error>
-    <<%= jhiPrefixDashed %>-alert></<%= jhiPrefixDashed %>-alert>
-    <%_ if (searchEngine === 'elasticsearch') { _%>
-    <div class="row">
-        <div class="col-sm-12">
-            <form name="searchForm" class="form-inline">
-                <div class="input-group w-100 mt-3">
-                    <input type="text" class="form-control" [(ngModel)]="currentSearch" id="currentSearch" name="currentSearch" placeholder="<% if (enableTranslation) { %>{{ '<%= i18nKeyPrefix %>.home.search' | translate }}<% } else { %>Query<% } %>">
-                    <button class="input-group-append btn btn-info" (click)="search(currentSearch)">
-                        <fa-icon [icon]="'search'"></fa-icon>
-                    </button>
-                    <button class="input-group-append btn btn-danger" (click)="clear()" *ngIf="currentSearch">
-                        <fa-icon [icon]="'trash-alt'"></fa-icon>
-                    </button>
-                </div>
-            </form>
+            </a>
+        <% _ } _%>
+    </div>
+    <!-- / HEADER -->
+
+    <!-- CONTENT -->
+    <div class="content p-24">
+                <<%= jhiPrefixDashed %>-alert-error>
+            </<%= jhiPrefixDashed %>-alert-error>
+            <<%= jhiPrefixDashed %>-alert>
+        </<%= jhiPrefixDashed %>-alert>
+        <div class="alert alert-warning" *ngIf="<%= entityInstancePlural %>?.length === 0">
+            <span jhiTranslate="<%= i18nKeyPrefix %>.home.notFound">No <%= entityInstancePlural %> found</span>
+        </div>
+
+        <mat-form-field *ngIf="<%= entityInstancePlural %>?.length > 0">
+            <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
+        </mat-form-field>
+
+        <div class="mat-elevation-z8" [ngStyle]="{display:  <%= entityInstancePlural %>?.length > 0? 'block' : 'none'}">
+            <table style="width:100%" mat-table [dataSource]="dataSource" matSort>
+
+                <!-- Dynamic Generated Columns -->
+
+                <ng-container *ngFor="let cols of displayedColumns">
+                    <ng-container matColumnDef="{{cols}}">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                            <ng-container [ngSwitch]="cols">
+                                <span *ngSwitchCase="'id'" jhiTranslate="global.field.id">ID</span>
+                                <span *ngSwitchCase="'options'" jhiTranslate="global.field.options">Options</span>
+                                <span *ngSwitchDefault
+                                      jhiTranslate="<%= i18nKeyPrefix %>.{{cols}}">{{cols}}</span>
+                            </ng-container>
+                        </th>
+                        <td mat-cell *matCellDef="let row">
+                            <ng-container *ngIf="cols === 'options'; else standard_column">
+                                <a mat-raised-button color="primary"
+                                   [routerLink]="['/<%= entityUrl %>', row.id, 'view' ]">
+                                    View
+                                </a>
+                                <% _ if (!readOnly) { _%>
+                                <a mat-raised-button color="accent"
+                                   [routerLink]="['/<%= entityUrl %>', row.id, 'edit']">
+                                    Edit
+                                </a>
+                                <a mat-raised-button color="warn"
+                                   [routerLink]="['/<%= entityUrl %>', { outlets: { popup: row.id  + '/delete'} }]"
+                                   [routerLink]="['/email-template', { outlets: { popup: row.id + '/delete'} }]"
+                                   replaceUrl="true"
+                                   queryParamsHandling="merge">
+                                    Delete
+                                </a>
+                                <% _ } _%>
+                            </ng-container>
+                            <ng-template #standard_column> {{row[cols]}}</ng-template>
+                        </td>
+                    </ng-container>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;">
+                </tr>
+            </table>
+
+            <ng-container>
+                <mat-paginator #paginator
+                               [ngStyle]="{display:  <%= entityInstancePlural %>?.length > 0? 'block' : 'none'}"
+                               [length]="totalItems"
+                               [pageIndex]="pageIndex"
+                               (page)="pageEvent = getServerData($event)"
+                               [pageSize]="itemsPerPage" showFirstLastButtons>
+                </mat-paginator>
+            </ng-container>
         </div>
     </div>
-    <%_ } _%>
-    <br/>
-    <div class="alert alert-warning" *ngIf="<%=entityInstancePlural %>?.length === 0">
-        <span jhiTranslate="<%= i18nKeyPrefix %>.home.notFound">No <%=entityInstancePlural %> found</span>
-    </div>
-    <div class="table-responsive" *ngIf="<%=entityInstancePlural %>?.length > 0">
-        <table class="table table-striped" aria-describedby="page-heading">
-            <thead>
-            <tr<% if (pagination !== 'no') { %> jhiSort [(predicate)]="predicate" [(ascending)]="reverse" [callback]="<%=pagination !== 'infinite-scroll' ? 'transition.bind(this)' : 'reset.bind(this)'%>"<% } %>>
-            <th scope="col" <% if (pagination !== 'no') { %> jhiSortBy="id"<% } %>><span jhiTranslate="global.field.id">ID</span><% if (pagination !== 'no') { %> <fa-icon [icon]="'sort'"></fa-icon><% } %></th>
-            <%_ for (idx in fields) { _%>
-            <th scope="col" <% if (pagination !== 'no') { %> jhiSortBy="<%= fields[idx].fieldName%>"<% } %>><span jhiTranslate="<%=`${i18nKeyPrefix}.${fields[idx].fieldName}` %>"><%= fields[idx].fieldNameHumanized %></span><% if (pagination !== 'no') { %> <fa-icon [icon]="'sort'"></fa-icon><% } %></th>
-            <%_ } _%>
-            <%_ for (idx in relationships) { _%>
-            <%_ if (relationships[idx].relationshipType === 'many-to-one'
-            || (relationships[idx].relationshipType === 'one-to-one' && relationships[idx].ownerSide === true)
-            || (relationships[idx].relationshipType === 'many-to-many' && relationships[idx].ownerSide === true && pagination === 'no')) {
-            const fieldName = dto === 'no' ? "." + relationships[idx].otherEntityField : relationships[idx].otherEntityFieldCapitalized;_%>
-            <th scope="col" <% if (pagination !== 'no') { %> jhiSortBy="<%=relationships[idx].relationshipName + (fieldName)%>"<% } %>><span jhiTranslate="<%= `${i18nKeyPrefix}.${relationships[idx].relationshipName}` %>"><%= relationships[idx].relationshipNameHumanized %></span><% if (pagination !== 'no') { %> <fa-icon [icon]="'sort'"></fa-icon><% } %></th>
-            <%_ } _%>
-            <%_ } _%>
-            <th scope="col"></th>
-            </tr>
-            </thead>
-            <tbody<% if (pagination === 'infinite-scroll') { %> infinite-scroll (scrolled)="loadPage(page + 1)" [infiniteScrollDisabled]="page >= links['last']" [infiniteScrollDistance]="0"<% } %>>
-            <tr *ngFor="let <%=entityInstance %> of <%=entityInstancePlural %> ;trackBy: trackId">
-                <td><a [routerLink]="['/<%= entityUrl %>', <%= entityInstance %>.id, 'view' ]">{{<%=entityInstance %>.id}}</a></td>
-                <%_ for (idx in fields) {
-                const fieldName = fields[idx].fieldName;
-                const fieldNameCapitalized = fields[idx].fieldNameCapitalized;
-                const fieldType = fields[idx].fieldType;
-                const fieldTypeBlobContent = fields[idx].fieldTypeBlobContent; _%>
-                <%_ if (['byte[]', 'ByteBuffer'].includes(fieldType) && fieldTypeBlobContent === 'image') { _%>
-                <td>
-                    <a *ngIf="<%= entityInstance %>.<%= fieldName %>" (click)="openFile(<%= entityInstance %>.<%= fieldName %>ContentType, <%= entityInstance %>.<%= fieldName %>)">
-                        <img [src]="'data:' + <%=entityInstance %>.<%=fieldName%>ContentType + ';base64,' + <%=entityInstance %>.<%=fieldName%>" style="max-height: 30px;" alt="<%=entityInstance %> image"/>
-                    </a>
-                    <span *ngIf="<%= entityInstance %>.<%= fieldName %>">{{<%= entityInstance %>.<%= fieldName %>ContentType}}, {{byteSize(<%= entityInstance %>.<%= fieldName %>)}}</span>
-                </td>
-                <%_ } else if (['byte[]', 'ByteBuffer'].includes(fieldType) && fieldTypeBlobContent === 'any') { _%>
-                <td>
-                    <a *ngIf="<%= entityInstance %>.<%= fieldName %>" (click)="openFile(<%= entityInstance %>.<%= fieldName %>ContentType, <%= entityInstance %>.<%= fieldName %>)" jhiTranslate="entity.action.open">open</a>
-                    <span *ngIf="<%= entityInstance %>.<%= fieldName %>">{{<%= entityInstance %>.<%= fieldName %>ContentType}}, {{byteSize(<%= entityInstance %>.<%= fieldName %>)}}</span>
-                </td>
-                <%_ } else if (fields[idx].fieldIsEnum) { _%>
-                <td jhiTranslate="{{'<%= angularAppName %>.<%= fieldType %>.' + <%= entityInstance %>.<%= fieldName %>}}">{{<%= entityInstance %>.<%= fieldName %>}}</td>
-                <%_ } else if (['Instant', 'ZonedDateTime'].includes(fieldType)) { _%>
-                <td>{{<%=entityInstance %>.<%=fieldName%> | date:'medium'}}</td>
-                <%_ } else if (fieldType === 'LocalDate') { _%>
-                <td>{{<%=entityInstance %>.<%=fieldName%> | date:'mediumDate'}}</td>
-                <%_ } else { _%>
-                <td>{{<%=entityInstance %>.<%=fieldName%>}}</td>
-                <%_ } _%>
-                <%_ } _%>
-                <%_ for (idx in relationships) {
-                const relationshipType = relationships[idx].relationshipType;
-                const ownerSide = relationships[idx].ownerSide;
-                const relationshipFieldName = relationships[idx].relationshipFieldName;
-                const relationshipFieldNamePlural = relationships[idx].relationshipFieldNamePlural;
-                const otherEntityName = relationships[idx].otherEntityName;
-                const otherEntityStateName = relationships[idx].otherEntityStateName;
-                const otherEntityField = relationships[idx].otherEntityField;
-                const otherEntityFieldCapitalized = relationships[idx].otherEntityFieldCapitalized; _%>
-                <%_ if (relationshipType === 'many-to-one'
-                || (relationshipType === 'one-to-one' && ownerSide === true)
-                || (relationshipType === 'many-to-many' && ownerSide === true && pagination === 'no')) { _%>
-                <td>
-                    <%_ if (otherEntityName === 'user') { _%>
-                        <%_ if (relationshipType === 'many-to-many') { _%>
-                    <span *ngFor="let <%= relationshipFieldName %> of <%= entityInstance %>.<%= relationshipFieldNamePlural %>; let last = last">
-                            {{<%= relationshipFieldName %>.<%= otherEntityField %>}}{{last ? '' : ', '}}
-                        </span>
-                        <%_ } else { _%>
-                            <%_ if (dto === 'no') { _%>
-                    {{<%= entityInstance + "." + relationshipFieldName + "?." + otherEntityField %>}}
-                            <%_ } else { _%>
-                    {{<%= entityInstance + "." + relationshipFieldName + otherEntityFieldCapitalized %>}}
-                            <%_ } _%>
-                        <%_ } _%>
-                    <%_ } else { _%>
-                        <%_ if (relationshipType === 'many-to-many') { _%>
-                    <span *ngFor="let <%= relationshipFieldName %> of <%= entityInstance %>.<%= relationshipFieldNamePlural %>; let last = last">
-                            <a class="form-control-static" [routerLink]="['/<%= otherEntityStateName %>', <%= relationshipFieldName %>?.id, 'view' ]">{{<%= relationshipFieldName %>.<%= otherEntityField %>}}</a>{{last ? '' : ', '}}
-                        </span>
-                        <%_ } else { _%>
-                            <%_ if (dto === 'no') { _%>
-                    <div *ngIf="<%= entityInstance + "." + relationshipFieldName %>">
-                        <a [routerLink]="['/<%= otherEntityStateName %>', <%= entityInstance + "." + relationshipFieldName + "?.id" %>, 'view' ]" >{{<%= entityInstance + "." + relationshipFieldName + "?." + otherEntityField %>}}</a>
-                    </div>
-                        <%_ } else { _%>
-                    <div *ngIf="<%= entityInstance + "." + relationshipFieldName + "Id" %>">
-                        <a [routerLink]="['/<%= otherEntityStateName %>', <%= entityInstance + "." + relationshipFieldName + "Id" %> %>, 'view' ]" >{{<%= entityInstance + "." + relationshipFieldName + otherEntityFieldCapitalized %>}}</a>
-                    </div>
-                            <%_ } _%>
-                        <%_ } _%>
-                    <%_ } _%>
-                </td>
-                <%_ } _%>
-                <%_ } _%>
-                <td class="text-right">
-                    <div class="btn-group">
-                        <button type="submit"
-                                [routerLink]="['/<%= entityUrl %>', <%= entityInstance %>.id, 'view' ]"
-                                class="btn btn-info btn-sm">
-                            <fa-icon [icon]="'eye'"></fa-icon>
-                            <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
-                        </button>
-                        <%_ if (!readOnly) { _%>
-                        <button type="submit"
-                                [routerLink]="['/<%= entityUrl %>', <%= entityInstance %>.id, 'edit']"
-                                class="btn btn-primary btn-sm">
-                            <fa-icon [icon]="'pencil-alt'"></fa-icon>
-                            <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Edit</span>
-                        </button>
-                        <button type="submit"
-                                [routerLink]="['/<%= entityUrl %>', { outlets: { popup: <%= entityInstance %>.id + '/delete'} }]"
-                                replaceUrl="true"
-                                queryParamsHandling="merge"
-                                class="btn btn-danger btn-sm">
-                            <fa-icon [icon]="'times'"></fa-icon>
-                            <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Delete</span>
-                        </button>
-                        <%_ } _%>
-                    </div>
-                </td>
-            </tr>
-            </tbody>
-        </table>
-    </div>
-<%_ if (databaseType !== 'cassandra') { _%>
-    <%_ if (pagination === 'pager') { _%>
-    <!-- Pager is not implemented yet, so this is normal pagination instead -->
-    <div [hidden]="<%=entityInstancePlural %>?.length === 0">
-        <div class="row justify-content-center">
-            <jhi-item-count [page]="page" [total]="totalItems" [itemsPerPage]="itemsPerPage"></jhi-item-count>
-        </div>
-        <div class="row justify-content-center">
-            <ngb-pagination [collectionSize]="totalItems" [(page)]="page" [pageSize]="itemsPerPage" [maxSize]="5" [rotate]="true" [boundaryLinks]="true" (pageChange)="loadPage(page)"></ngb-pagination>
-        </div>
-    </div>
-    <%_ } else if (pagination === 'pagination') { _%>
-    <div [hidden]="<%=entityInstancePlural %>?.length === 0">
-        <div class="row justify-content-center">
-            <jhi-item-count [page]="page" [total]="totalItems" [itemsPerPage]="itemsPerPage"></jhi-item-count>
-        </div>
-        <div class="row justify-content-center">
-            <ngb-pagination [collectionSize]="totalItems" [(page)]="page" [pageSize]="itemsPerPage" [maxSize]="5" [rotate]="true" [boundaryLinks]="true" (pageChange)="loadPage(page)"></ngb-pagination>
-        </div>
-    </div>
-    <%_ } _%>
-<%_ } _%>
+    <!-- / CONTENT -->
 </div>
