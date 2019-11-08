@@ -27,8 +27,10 @@
                     <mat-icon class="secondary-text s-18">home</mat-icon>
                 </a>
                 <mat-icon class="secondary-text s-16">chevron_right</mat-icon>
+                <a  [routerLink]="['/<%= entityUrl %>']">
                 <span class="secondary-text"
                       jhiTranslate="<%= i18nKeyPrefix %>.home.title"><%= entityClassPluralHumanized %></span>
+                </a>
             </div>
             <ng-container *ngIf="<%= entityInstance %>">
                 <div class="h2 mt-16"><span
@@ -43,9 +45,6 @@
     <!-- CONTENT -->
     <div class="content p-24">
         <ng-container *ngIf="<%= entityInstance %>">
-            <h2><span jhiTranslate="<%= i18nKeyPrefix %>.detail.title"><%= entityClassHumanized %></span> {{<%= entityInstance %>.id}}</h2>
-            <h2>Angular Material version </h2>
-            <hr>
             <<%= jhiPrefixDashed %>-alert-error></<%= jhiPrefixDashed %>-alert-error>
             <dl class="row-md jh-entity-details">
                 <%_ for (idx in fields) {
